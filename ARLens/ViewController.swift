@@ -557,8 +557,47 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 		objectViewController.popoverPresentationController?.sourceView = button
 		objectViewController.popoverPresentationController?.sourceRect = button.bounds
     }
-	
-	// MARK: - VirtualObjectSelectionViewControllerDelegate
+
+    func changeScale(_ recognizer: UIGestureRecognizer) {
+        let controller = UIAlertController(title: "Update Scale", message: nil, preferredStyle: .alert)
+
+        controller.addTextField { textField in
+            textField.placeholder = "Width"
+            textField.keyboardType = .decimalPad
+        }
+
+        controller.addTextField { textField in
+            textField.placeholder = "Height"
+            textField.keyboardType = .decimalPad
+        }
+
+        controller.addTextField { textField in
+            textField.placeholder = "Depth"
+            textField.keyboardType = .decimalPad
+        }
+
+       controller.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+        let textFields = controller.textFields!
+        let updateAction = UIAlertAction(title: "Update", style: .default, handler: { action in
+            let width = Float(textFields[0].text!) ?? 1.0
+            let height = Float(textFields[1].text!) ?? 1.0
+            let depth = Float(textFields[2].text!) ?? 1.0
+
+            let transform = SCNVector3(width, height, depth)
+            self.virtualObject?.scale = transform
+
+            if let nodeWhichReactsToScale = self.virtualObject?.reactsToScale() {
+                nodeWhichReactsToScale.reactToScale()
+            }
+        })
+        controller.addAction(updateAction)
+        controller.preferredAction = updateAction
+
+        present(controller, animated: true, completion: nil)
+    }
+
+    // MARK: - VirtualObjectSelectionViewControllerDelegate
 	
 	func virtualObjectSelectionViewController(_: VirtualObjectSelectionViewController, didSelectObjectAt index: Int) {
 		loadVirtualObject(at: index)
@@ -863,3 +902,4 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 		updateSettings()
 	}
 }
+
