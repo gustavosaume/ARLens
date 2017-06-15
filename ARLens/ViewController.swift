@@ -12,10 +12,19 @@ import UIKit
 import Photos
 
 class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentationControllerDelegate, VirtualObjectSelectionViewControllerDelegate {
-	
+
+    private lazy var doubleTapGesture: UITapGestureRecognizer = {
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(changeScale(_:)))
+        recognizer.numberOfTapsRequired = 2
+        recognizer.isEnabled = false
+        return recognizer
+    }()
+
     // MARK: - Main Setup & View Controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        view.addGestureRecognizer(doubleTapGesture)
 
         Setting.registerDefaults()
         setupScene()
@@ -484,7 +493,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 	
     // MARK: - Virtual Object Loading
 	
-	var virtualObject: VirtualObject?
+    var virtualObject: VirtualObject? {
+        didSet {
+            let enabled = virtualObject != nil
+            self.doubleTapGesture.isEnabled = enabled
+        }
+    }
+
 	var isLoadingObject: Bool = false {
 		didSet {
 			DispatchQueue.main.async {
@@ -558,7 +573,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 		objectViewController.popoverPresentationController?.sourceRect = button.bounds
     }
 
-    func changeScale(_ recognizer: UIGestureRecognizer) {
+    @objc func changeScale(_ recognizer: UITapGestureRecognizer) {
         let controller = UIAlertController(title: "Update Scale", message: nil, preferredStyle: .alert)
 
         controller.addTextField { textField in
