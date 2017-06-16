@@ -88,17 +88,21 @@ extension VirtualObject {
 	}
 	
 	static let availableObjects: [VirtualObject] = [
+        PhoneBooth(),
 		Candle(),
 		Cup(),
 		Vase(),
 		Lamp(),
-		Chair()
+		Chair(),
+        Duck(),
 	]
 
     static let availableScenes: [VirtualObject] = [
+        
         Lamp(),
         Chair(),
         Lounge(),
+        ConferenceRoom(),
     ]
 }
 

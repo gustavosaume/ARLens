@@ -21,6 +21,9 @@
 		39D4A8BE1EA1AF530006EC65 /* PlaneDebugVisualization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D4A8BD1EA1AF530006EC65 /* PlaneDebugVisualization.swift */; };
 		39D8DC1B1E8ADAE600386B05 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39D8DC1A1E8ADAE600386B05 /* LaunchScreen.storyboard */; };
 		4412C5291EF316B0003526A1 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3929C4971E89EC2C00E00B60 /* Info.plist */; };
+		44656BE91EF42E6D009CC5C6 /* ConferenceRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44656BE81EF42E6D009CC5C6 /* ConferenceRoom.swift */; };
+		44656BEC1EF4317A009CC5C6 /* PhoneBooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44656BEB1EF4317A009CC5C6 /* PhoneBooth.swift */; };
+		446B5D831EF4473600004B6B /* Duck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B5D821EF4473600004B6B /* Duck.swift */; };
 		C40FE5291EC239F100732B01 /* Candle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40FE5231EC239F100732B01 /* Candle.swift */; };
 		C40FE52A1EC239F100732B01 /* Chair.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40FE5241EC239F100732B01 /* Chair.swift */; };
 		C40FE52B1EC239F100732B01 /* Cup.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40FE5251EC239F100732B01 /* Cup.swift */; };
@@ -50,6 +53,9 @@
 		39C0B9581E9C6B1F003FCA0C /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		39D4A8BD1EA1AF530006EC65 /* PlaneDebugVisualization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaneDebugVisualization.swift; sourceTree = "<group>"; };
 		39D8DC1A1E8ADAE600386B05 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		44656BE81EF42E6D009CC5C6 /* ConferenceRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConferenceRoom.swift; sourceTree = "<group>"; };
+		44656BEB1EF4317A009CC5C6 /* PhoneBooth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneBooth.swift; sourceTree = "<group>"; };
+		446B5D821EF4473600004B6B /* Duck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Duck.swift; sourceTree = "<group>"; };
 		C40FE5231EC239F100732B01 /* Candle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Candle.swift; path = "ARLens/Virtual Objects/Candle.swift"; sourceTree = SOURCE_ROOT; };
 		C40FE5241EC239F100732B01 /* Chair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Chair.swift; path = "ARLens/Virtual Objects/Chair.swift"; sourceTree = SOURCE_ROOT; };
 		C40FE5251EC239F100732B01 /* Cup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Cup.swift; path = "ARLens/Virtual Objects/Cup.swift"; sourceTree = SOURCE_ROOT; };
@@ -143,6 +149,9 @@
 				C40FE5261EC239F100732B01 /* Lamp.swift */,
 				C40FE5281EC239F100732B01 /* Vase.swift */,
 				0D7BE5DF1EF440B000AF8AA5 /* Lounge.swift */,
+				44656BE81EF42E6D009CC5C6 /* ConferenceRoom.swift */,
+				44656BEB1EF4317A009CC5C6 /* PhoneBooth.swift */,
+				446B5D821EF4473600004B6B /* Duck.swift */,
 			);
 			path = "Virtual Objects";
 			sourceTree = "<group>";
@@ -237,12 +246,15 @@
 				C40FE52A1EC239F100732B01 /* Chair.swift in Sources */,
 				3929C48E1E89EC2C00E00B60 /* ViewController.swift in Sources */,
 				C41366B91EB80DD400EC054A /* TextManager.swift in Sources */,
+				446B5D831EF4473600004B6B /* Duck.swift in Sources */,
 				39C0B95A1E9C6B1F003FCA0C /* Utilities.swift in Sources */,
 				C40FE52E1EC239F100732B01 /* Vase.swift in Sources */,
 				392BB82C1EA19A7C00FBBAC8 /* Plane.swift in Sources */,
 				3987BEDC1E9E057F00167FAC /* Gesture.swift in Sources */,
+				44656BEC1EF4317A009CC5C6 /* PhoneBooth.swift in Sources */,
 				C4E87DD91EA6B40F002117D6 /* VirtualObject.swift in Sources */,
 				C40FE5291EC239F100732B01 /* Candle.swift in Sources */,
+				44656BE91EF42E6D009CC5C6 /* ConferenceRoom.swift in Sources */,
 				39D4A8BE1EA1AF530006EC65 /* PlaneDebugVisualization.swift in Sources */,
 				39C0B9591E9C6B1F003FCA0C /* SettingsViewController.swift in Sources */,
 				C490DAC41E9AB63400210960 /* VirtualObjectSelectionViewController.swift in Sources */,
