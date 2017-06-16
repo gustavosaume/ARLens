@@ -7,16 +7,39 @@ Popover view controller for choosing virtual objects to place in the AR scene.
 
 import UIKit
 
+final class FurnitureSelectionViewController: VirtualObjectSelectionViewController {
+    init(size: CGSize) {
+        super.init(size: size, models: VirtualObject.availableObjects)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+final class SceneSelectionViewController: VirtualObjectSelectionViewController {
+    init(size: CGSize) {
+        super.init(size: size, models: VirtualObject.availableScenes)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class VirtualObjectSelectionViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 	
 	private var tableView: UITableView!
 	private var size: CGSize!
 	private var selectedVirtualObjectRow: Int = -1
 	weak var delegate: VirtualObjectSelectionViewControllerDelegate?
-	
-	init(size: CGSize) {
-		super.init(nibName: nil, bundle: nil)
-		self.size = size
+
+    private let availableModels: [VirtualObject]
+
+    init(size: CGSize, models: [VirtualObject]) {
+        self.size = size
+        self.availableModels = models
+        super.init(nibName: nil, bundle: nil)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
@@ -49,7 +72,7 @@ class VirtualObjectSelectionViewController: UIViewController, UITableViewDataSou
 		if indexPath.row == selectedVirtualObjectRow {
 			delegate?.virtualObjectSelectionViewControllerDidDeselectObject(self)
 		} else {
-			delegate?.virtualObjectSelectionViewController(self, didSelectObjectAt: indexPath.row)
+			delegate?.virtualObjectSelectionViewController(self, didSelectObject: availableModels[indexPath.row])
 			UserDefaults.standard.set(indexPath.row, for: .selectedObjectID)
 		}
 		self.dismiss(animated: true, completion: nil)
@@ -57,7 +80,7 @@ class VirtualObjectSelectionViewController: UIViewController, UITableViewDataSou
 	
 	// MARK: - UITableViewDataSource
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return VirtualObject.availableObjects.count
+		return availableModels.count
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -82,7 +105,7 @@ class VirtualObjectSelectionViewController: UIViewController, UITableViewDataSou
 		}
 		
 		// Fill up the cell with data from the object.
-		let object = VirtualObject.availableObjects[indexPath.row]
+		let object = availableModels[indexPath.row]
 		var thumbnailImage = object.thumbImage!
 		if let invertedImage = thumbnailImage.inverted() {
 			thumbnailImage = invertedImage
@@ -106,6 +129,6 @@ class VirtualObjectSelectionViewController: UIViewController, UITableViewDataSou
 
 // MARK: - VirtualObjectSelectionViewControllerDelegate
 protocol VirtualObjectSelectionViewControllerDelegate: class {
-	func virtualObjectSelectionViewController(_: VirtualObjectSelectionViewController, didSelectObjectAt index: Int)
+    func virtualObjectSelectionViewController(_: VirtualObjectSelectionViewController, didSelectObject virtualObject: VirtualObject)
 	func virtualObjectSelectionViewControllerDidDeselectObject(_: VirtualObjectSelectionViewController)
 }

@@ -230,10 +230,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 	var currentGesture: Gesture?
 	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		guard let object = virtualObject else {
-			return
-		}
-		
+        guard let location = touches.first?.location(in: sceneView) else { return }
+//        let result = sceneView.hitTest(location, options: nil)
+//        guard let node = result.flatMap({ $0.node }).first else { return }
+//
+//        let object: VirtualObject
+//        if node == self.virtualScene {
+//            object = self.virtualScene!
+//        } else if node == self.virtualObject {
+//            object = self.virtualObject!
+//        } else {
+//            return
+//        }
+
+        guard let object = self.virtualObject else { return }
+
 		if currentGesture == nil {
 			currentGesture = Gesture.startGestureFromTouches(touches, self.sceneView, object)
 		} else {
@@ -292,19 +303,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 		textManager.showDebugMessage("Distance: \(distance) m\nRotation: \(angleDegrees)°\nScale: \(scale)x")
 	}
 	
-	func moveVirtualObjectToPosition(_ pos: SCNVector3?, _ instantly: Bool, _ filterPosition: Bool) {
+    func move(object: VirtualObject?, position pos: SCNVector3?, _ instantly: Bool, _ filterPosition: Bool) {
 		
-		guard let newPosition = pos else {
+        guard let object = object, let newPosition = pos else {
 			textManager.showMessage("CANNOT PLACE OBJECT\nTry moving left or right.")
 			// Reset the content selection in the menu only if the content has not yet been initially placed.
-			if virtualObject == nil {
-				resetVirtualObject()
-			}
+//            if virtualObject == nil {
+//                resetVirtualObject()
+//            }
 			return
 		}
 		
 		if instantly {
-			setNewVirtualObjectPosition(newPosition)
+			set(newVirtualObject: object, position: newPosition)
 		} else {
 			updateVirtualObjectPosition(newPosition, filterPosition)
 		}
@@ -384,9 +395,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 	// Use average of recent virtual object distances to avoid rapid changes in object scale.
 	var recentVirtualObjectDistances = [CGFloat]()
 	
-    func setNewVirtualObjectPosition(_ pos: SCNVector3) {
-	
-		guard let object = virtualObject, let cameraTransform = session.currentFrame?.camera.transform else {
+    func set(newVirtualObject: VirtualObject, position pos: SCNVector3) {
+		guard let cameraTransform = session.currentFrame?.camera.transform else {
 			return
 		}
 		
@@ -398,10 +408,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 		// Limit the distance of the object from the camera to a maximum of 10 meters.
 		cameraToPosition.setMaximumLength(10)
 
-		object.position = cameraWorldPos + cameraToPosition
+		newVirtualObject.position = cameraWorldPos + cameraToPosition
 		
-		if object.parent == nil {
-			sceneView.scene.rootNode.addChildNode(object)
+		if newVirtualObject.parent == nil {
+			sceneView.scene.rootNode.addChildNode(newVirtualObject)
 		}
     }
 
@@ -493,12 +503,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 	
     // MARK: - Virtual Object Loading
 	
-    var virtualObject: VirtualObject? {
+    var virtualObject: VirtualObject?  {
         didSet {
             let enabled = virtualObject != nil
             self.doubleTapGesture.isEnabled = enabled
         }
     }
+
+    var virtualScene: VirtualObject?
 
 	var isLoadingObject: Bool = false {
 		didSet {
@@ -513,9 +525,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 	
 	@IBOutlet weak var addObjectButton: UIButton!
 	
-	func loadVirtualObject(at index: Int) {
-		resetVirtualObject()
-		
+    func load(virtualObject: VirtualObject) {
+        self.virtualObject?.unloadModel()
+        self.virtualObject?.removeFromParentNode()
+        self.virtualObject = nil
+
 		// Show progress indicator
 		let spinner = UIActivityIndicatorView()
 		spinner.center = addObjectButton.center
@@ -527,31 +541,72 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 		// Load the content asynchronously.
 		DispatchQueue.global().async {
 			self.isLoadingObject = true
-			let object = VirtualObject.availableObjects[index]
-			object.viewController = self
-			self.virtualObject = object
+			virtualObject.viewController = self
+			self.virtualObject = virtualObject
 			
-			object.loadModel()
+			virtualObject.loadModel()
 			
 			DispatchQueue.main.async {
 				// Immediately place the object in 3D space.
 				if let lastFocusSquarePos = self.focusSquare?.lastPosition {
-					self.setNewVirtualObjectPosition(lastFocusSquarePos)
+                    self.set(newVirtualObject: virtualObject, position: lastFocusSquarePos)
 				} else {
-					self.setNewVirtualObjectPosition(SCNVector3Zero)
+                    self.set(newVirtualObject: virtualObject, position: SCNVector3Zero)
 				}
 				
 				// Remove progress indicator
 				spinner.removeFromSuperview()
 				
 				// Update the icon of the add object button
-				let buttonImage = UIImage.composeButtonImage(from: object.thumbImage)
-				let pressedButtonImage = UIImage.composeButtonImage(from: object.thumbImage, alpha: 0.3)
+				let buttonImage = UIImage.composeButtonImage(from: virtualObject.thumbImage)
+				let pressedButtonImage = UIImage.composeButtonImage(from: virtualObject.thumbImage, alpha: 0.3)
 				self.addObjectButton.setImage(buttonImage, for: [])
 				self.addObjectButton.setImage(pressedButtonImage, for: [.highlighted])
 				self.isLoadingObject = false
 			}
 		}
+    }
+
+    func load(virtualScene: VirtualObject) {
+        self.virtualScene?.unloadModel()
+        self.virtualScene?.removeFromParentNode()
+        self.virtualScene = nil
+
+        // Show progress indicator
+        let spinner = UIActivityIndicatorView()
+        spinner.center = addObjectButton.center
+        spinner.bounds.size = CGSize(width: addObjectButton.bounds.width - 5, height: addObjectButton.bounds.height - 5)
+        addObjectButton.setImage(#imageLiteral(resourceName: "buttonring"), for: [])
+        sceneView.addSubview(spinner)
+        spinner.startAnimating()
+
+        // Load the content asynchronously.
+        DispatchQueue.global().async {
+            self.isLoadingObject = true
+            virtualScene.viewController = self
+            self.virtualScene = virtualScene
+
+            virtualScene.loadModel()
+
+            DispatchQueue.main.async {
+                // Immediately place the object in 3D space.
+                if let lastFocusSquarePos = self.focusSquare?.lastPosition {
+                    self.set(newVirtualObject: virtualScene, position: lastFocusSquarePos)
+                } else {
+                    self.set(newVirtualObject: virtualScene, position: SCNVector3Zero)
+                }
+
+                // Remove progress indicator
+                spinner.removeFromSuperview()
+
+                // Update the icon of the add object button
+                let buttonImage = UIImage.composeButtonImage(from: virtualScene.thumbImage)
+                let pressedButtonImage = UIImage.composeButtonImage(from: virtualScene.thumbImage, alpha: 0.3)
+                self.addObjectButton.setImage(buttonImage, for: [])
+                self.addObjectButton.setImage(pressedButtonImage, for: [.highlighted])
+                self.isLoadingObject = false
+            }
+        }
     }
 	
 	@IBAction func chooseObject(_ button: UIButton) {
@@ -563,7 +618,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 		let rowHeight = 45
 		let popoverSize = CGSize(width: 250, height: rowHeight * VirtualObject.availableObjects.count)
 		
-		let objectViewController = VirtualObjectSelectionViewController(size: popoverSize)
+		let objectViewController = FurnitureSelectionViewController(size: popoverSize)
 		objectViewController.delegate = self
 		objectViewController.modalPresentationStyle = .popover
 		objectViewController.popoverPresentationController?.delegate = self
@@ -613,9 +668,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
     }
 
     // MARK: - VirtualObjectSelectionViewControllerDelegate
+    @IBAction func chooseScene(_ button: UIButton) {
+        // Abort if we are about to load another object to avoid concurrent modifications of the scene.
+        if isLoadingObject { return }
+
+        textManager.cancelScheduledMessage(forType: .contentPlacement)
+
+        let rowHeight = 45
+        let popoverSize = CGSize(width: 250, height: rowHeight * VirtualObject.availableObjects.count)
+
+        let objectViewController = SceneSelectionViewController(size: popoverSize)
+        objectViewController.delegate = self
+        objectViewController.modalPresentationStyle = .popover
+        objectViewController.popoverPresentationController?.delegate = self
+        self.present(objectViewController, animated: true, completion: nil)
+
+        objectViewController.popoverPresentationController?.sourceView = button
+        objectViewController.popoverPresentationController?.sourceRect = button.bounds
+    }
 	
-	func virtualObjectSelectionViewController(_: VirtualObjectSelectionViewController, didSelectObjectAt index: Int) {
-		loadVirtualObject(at: index)
+	// MARK: - VirtualObjectSelectionViewControllerDelegate
+	
+    func virtualObjectSelectionViewController(_ controller: VirtualObjectSelectionViewController, didSelectObject virtualObject: VirtualObject) {
+        if controller is FurnitureSelectionViewController {
+            load(virtualObject: virtualObject)
+        } else if controller is SceneSelectionViewController {
+            load(virtualScene: virtualObject)
+        }
 	}
 	
 	func virtualObjectSelectionViewControllerDidDeselectObject(_: VirtualObjectSelectionViewController) {

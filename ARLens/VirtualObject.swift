@@ -70,7 +70,7 @@ class VirtualObject: SCNNode {
 		
 		let result = controller.worldPositionFromScreenPosition(pos, objectPos: self.position, infinitePlane: infinitePlane)
 
-		controller.moveVirtualObjectToPosition(result.position, instantly, !result.hitAPlane)
+//        controller.moveVirtualObjectToPosition(result.position, instantly, !result.hitAPlane)
 	}
 }
 
@@ -95,6 +95,11 @@ extension VirtualObject {
 		Lamp(),
 		Chair()
 	]
+
+    static let availableScenes: [VirtualObject] = [
+        Lamp(),
+        Chair(),
+    ]
 }
 
 // MARK: - Protocols for Virtual Objects
