@@ -98,6 +98,7 @@ extension VirtualObject {
     static let availableScenes: [VirtualObject] = [
         Lamp(),
         Chair(),
+        Lounge(),
     ]
 }
 
