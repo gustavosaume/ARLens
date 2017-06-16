@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D2E49891EF459D300187732 /* UIImageRotate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D2E49881EF459D300187732 /* UIImageRotate.swift */; };
 		0D7BE5E01EF440B000AF8AA5 /* Lounge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7BE5DF1EF440B000AF8AA5 /* Lounge.swift */; };
 		3929C48C1E89EC2C00E00B60 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3929C48B1E89EC2C00E00B60 /* AppDelegate.swift */; };
 		3929C48E1E89EC2C00E00B60 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3929C48D1E89EC2C00E00B60 /* ViewController.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0D2E49881EF459D300187732 /* UIImageRotate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UIImageRotate.swift; path = ARLens/UIImageRotate.swift; sourceTree = SOURCE_ROOT; };
 		0D7BE5DF1EF440B000AF8AA5 /* Lounge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lounge.swift; sourceTree = "<group>"; };
 		16DA3C59CAE7D97A9FDD9FA0 /* SampleCode.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		3929C4881E89EC2C00E00B60 /* ARLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +120,7 @@
 				C40DF57B1EC2330700D9D59E /* Virtual Objects */,
 				113B64D01ECA81CA0071CBD1 /* UI Elements */,
 				39C0B9571E9C6B1F003FCA0C /* SettingsViewController.swift */,
+				0D2E49881EF459D300187732 /* UIImageRotate.swift */,
 				C490DAC31E9AB63400210960 /* VirtualObjectSelectionViewController.swift */,
 				C41366B81EB80DD400EC054A /* TextManager.swift */,
 				C4FBC02A1EC6438B003F7864 /* ARCameraTrackingState.swift */,
@@ -246,6 +249,7 @@
 				C40FE52A1EC239F100732B01 /* Chair.swift in Sources */,
 				3929C48E1E89EC2C00E00B60 /* ViewController.swift in Sources */,
 				C41366B91EB80DD400EC054A /* TextManager.swift in Sources */,
+				0D2E49891EF459D300187732 /* UIImageRotate.swift in Sources */,
 				446B5D831EF4473600004B6B /* Duck.swift in Sources */,
 				39C0B95A1E9C6B1F003FCA0C /* Utilities.swift in Sources */,
 				C40FE52E1EC239F100732B01 /* Vase.swift in Sources */,

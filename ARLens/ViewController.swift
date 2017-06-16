@@ -904,6 +904,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 
         let imagePlane = SCNPlane(width: sceneView.bounds.width/6000,
                                   height: sceneView.bounds.height/6000)
+    
+        //imagePlane.firstMaterial?.diffuse.contents = sceneView.snapshot().rotate(byDegrees:-90)
         imagePlane.firstMaterial?.diffuse.contents = sceneView.snapshot()
         imagePlane.firstMaterial?.lightingModel = .constant
 
