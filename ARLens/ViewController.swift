@@ -898,36 +898,50 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 		guard screenshotButton.isEnabled else {
 			return
 		}
-		
-		let takeScreenshotBlock = {
-			UIImageWriteToSavedPhotosAlbum(self.sceneView.snapshot(), nil, nil, nil)
-			DispatchQueue.main.async {
-				// Briefly flash the screen.
-				let flashOverlay = UIView(frame: self.sceneView.frame)
-				flashOverlay.backgroundColor = UIColor.white
-				self.sceneView.addSubview(flashOverlay)
-				UIView.animate(withDuration: 0.25, animations: {
-					flashOverlay.alpha = 0.0
-				}, completion: { _ in
-					flashOverlay.removeFromSuperview()
-				})
-			}
-		}
-		
-		switch PHPhotoLibrary.authorizationStatus() {
-		case .authorized:
-			takeScreenshotBlock()
-		case .restricted, .denied:
-			let title = "Photos access denied"
-			let message = "Please enable Photos access for this application in Settings > Privacy to allow saving screenshots."
-			textManager.showAlert(title: title, message: message)
-		case .notDetermined:
-			PHPhotoLibrary.requestAuthorization({ (authorizationStatus) in
-				if authorizationStatus == .authorized {
-					takeScreenshotBlock()
-				}
-			})
-		}
+
+        guard let currentFrame = sceneView.session.currentFrame else { return }
+
+        let imagePlane = SCNPlane(width: sceneView.bounds.width/6000,
+                                  height: sceneView.bounds.height/6000)
+        imagePlane.firstMaterial?.diffuse.contents = sceneView.snapshot()
+        imagePlane.firstMaterial?.lightingModel = .constant
+
+        let planeNode = SCNNode(geometry: imagePlane)
+        sceneView.scene.rootNode.addChildNode(planeNode)
+
+        var translation = matrix_identity_float4x4
+        translation.columns.3.z = -0.1
+        planeNode.simdTransform = matrix_multiply(currentFrame.camera.transform, translation)
+
+//        let takeScreenshotBlock = {
+//            UIImageWriteToSavedPhotosAlbum(self.sceneView.snapshot(), nil, nil, nil)
+//            DispatchQueue.main.async {
+//                // Briefly flash the screen.
+//                let flashOverlay = UIView(frame: self.sceneView.frame)
+//                flashOverlay.backgroundColor = UIColor.white
+//                self.sceneView.addSubview(flashOverlay)
+//                UIView.animate(withDuration: 0.25, animations: {
+//                    flashOverlay.alpha = 0.0
+//                }, completion: { _ in
+//                    flashOverlay.removeFromSuperview()
+//                })
+//            }
+//        }
+//
+//        switch PHPhotoLibrary.authorizationStatus() {
+//        case .authorized:
+//            takeScreenshotBlock()
+//        case .restricted, .denied:
+//            let title = "Photos access denied"
+//            let message = "Please enable Photos access for this application in Settings > Privacy to allow saving screenshots."
+//            textManager.showAlert(title: title, message: message)
+//        case .notDetermined:
+//            PHPhotoLibrary.requestAuthorization({ (authorizationStatus) in
+//                if authorizationStatus == .authorized {
+//                    takeScreenshotBlock()
+//                }
+//            })
+//        }
 	}
 		
 	// MARK: - Settings
