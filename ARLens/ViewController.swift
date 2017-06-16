@@ -263,11 +263,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 	}
 	
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		if virtualObject == nil {
-			chooseObject(addObjectButton)
-			return
-		}
-		
 		currentGesture = currentGesture?.updateGestureFromTouches(touches, .touchEnded)
 	}
 	
@@ -417,15 +412,27 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 
 	func resetVirtualObject() {
 		virtualObject?.unloadModel()
-		virtualObject?.removeFromParentNode()
-		virtualObject = nil
-		
-		addObjectButton.setImage(#imageLiteral(resourceName: "add"), for: [])
-		addObjectButton.setImage(#imageLiteral(resourceName: "addPressed"), for: [.highlighted])
+        virtualObject?.removeFromParentNode()
+        virtualObject = nil
+        
+        addObjectButton.setImage(#imageLiteral(resourceName: "add"), for: [])
+        addObjectButton.setImage(#imageLiteral(resourceName: "addPressed"), for: [.highlighted])
 		
 		// Reset selected object id for row highlighting in object selection view controller.
 		UserDefaults.standard.set(-1, for: .selectedObjectID)
 	}
+
+    func resetVirtualScene() {
+        virtualScene?.unloadModel()
+        virtualScene?.removeFromParentNode()
+        virtualScene = nil
+
+        addSceneButton.setImage(#imageLiteral(resourceName: "add"), for: [])
+        addSceneButton.setImage(#imageLiteral(resourceName: "addPressed"), for: [.highlighted])
+
+        // Reset selected object id for row highlighting in object selection view controller.
+        UserDefaults.standard.set(-1, for: .selectedObjectID)
+    }
 	
 	func updateVirtualObjectPosition(_ pos: SCNVector3, _ filterPosition: Bool) {
 		guard let object = virtualObject else {
@@ -517,6 +524,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 			DispatchQueue.main.async {
 				self.settingsButton.isEnabled = !self.isLoadingObject
 				self.addObjectButton.isEnabled = !self.isLoadingObject
+                self.addSceneButton.isEnabled = !self.isLoadingObject
 				self.screenshotButton.isEnabled = !self.isLoadingObject
 				self.restartExperienceButton.isEnabled = !self.isLoadingObject
 			}
@@ -524,11 +532,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 	}
 	
 	@IBOutlet weak var addObjectButton: UIButton!
+    @IBOutlet weak var addSceneButton: UIButton!
 	
     func load(virtualObject: VirtualObject) {
-        self.virtualObject?.unloadModel()
-        self.virtualObject?.removeFromParentNode()
-        self.virtualObject = nil
+        resetVirtualObject()
 
 		// Show progress indicator
 		let spinner = UIActivityIndicatorView()
@@ -568,15 +575,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
     }
 
     func load(virtualScene: VirtualObject) {
-        self.virtualScene?.unloadModel()
-        self.virtualScene?.removeFromParentNode()
-        self.virtualScene = nil
+        resetVirtualScene()
 
         // Show progress indicator
         let spinner = UIActivityIndicatorView()
-        spinner.center = addObjectButton.center
-        spinner.bounds.size = CGSize(width: addObjectButton.bounds.width - 5, height: addObjectButton.bounds.height - 5)
-        addObjectButton.setImage(#imageLiteral(resourceName: "buttonring"), for: [])
+        spinner.center = addSceneButton.center
+        spinner.bounds.size = CGSize(width: addSceneButton.bounds.width - 5, height: addSceneButton.bounds.height - 5)
+        addSceneButton.setImage(#imageLiteral(resourceName: "buttonring"), for: [])
         sceneView.addSubview(spinner)
         spinner.startAnimating()
 
@@ -602,8 +607,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
                 // Update the icon of the add object button
                 let buttonImage = UIImage.composeButtonImage(from: virtualScene.thumbImage)
                 let pressedButtonImage = UIImage.composeButtonImage(from: virtualScene.thumbImage, alpha: 0.3)
-                self.addObjectButton.setImage(buttonImage, for: [])
-                self.addObjectButton.setImage(pressedButtonImage, for: [.highlighted])
+                self.addSceneButton.setImage(buttonImage, for: [])
+                self.addSceneButton.setImage(pressedButtonImage, for: [.highlighted])
                 self.isLoadingObject = false
             }
         }
@@ -688,7 +693,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
     }
 	
 	// MARK: - VirtualObjectSelectionViewControllerDelegate
-	
+
     func virtualObjectSelectionViewController(_ controller: VirtualObjectSelectionViewController, didSelectObject virtualObject: VirtualObject) {
         if controller is FurnitureSelectionViewController {
             load(virtualObject: virtualObject)
