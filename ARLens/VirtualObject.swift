@@ -69,8 +69,7 @@ class VirtualObject: SCNNode {
 		}
 		
 		let result = controller.worldPositionFromScreenPosition(pos, objectPos: self.position, infinitePlane: infinitePlane)
-
-//        controller.moveVirtualObjectToPosition(result.position, instantly, !result.hitAPlane)
+        controller.move(object: self, position: result.position, instantly, !result.hitAPlane)
 	}
 }
 
