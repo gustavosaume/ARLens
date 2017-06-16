@@ -881,6 +881,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIPopoverPresentation
 			
 			self.setupFocusSquare()
 			self.resetVirtualObject()
+            self.resetVirtualScene()
 			self.restartPlaneDetection()
 			
 			self.restartExperienceButton.setImage(#imageLiteral(resourceName: "restart"), for: [])
